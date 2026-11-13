@@ -20,4 +20,16 @@ internal class Author
     [JsonPropertyName("union_openid")]
     [GuidJsonConverter]
     public Guid? UnionOpenId { get; init; }
+
+    [JsonPropertyName("username")]
+    public string? Username { get; init; }
+
+    [JsonPropertyName("member_nickname")]
+    public string? MemberNickname { get; init; }
+
+    [JsonPropertyName("member_role")]
+    public string? MemberRole { get; init; }
+
+    [JsonPropertyName("avatar")]
+    public string? Avatar { get; init; }
 }

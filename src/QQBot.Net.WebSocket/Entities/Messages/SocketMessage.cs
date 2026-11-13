@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using QQBot.Rest;
 
@@ -40,6 +40,31 @@ public abstract class SocketMessage : SocketEntity<string>, IMessage
     /// <inheritdoc />
     public IReadOnlyCollection<ITag> Tags => _tags;
 
+    /// <summary>
+    ///     获取此消息发送者的用户名。该字段由 QQ 机器人网关直接下发，可能为 <see langword="null" />。
+    /// </summary>
+    public string? AuthorUsername { get; private set; }
+
+    /// <summary>
+    ///     获取此消息发送者在群内的昵称。该字段由 QQ 机器人网关直接下发，可能为 <see langword="null" />。
+    /// </summary>
+    public string? AuthorGroupNickname { get; private set; }
+
+    /// <summary>
+    ///     获取此消息发送者在群内的角色（member / admin / owner）。可能为 <see langword="null" />。
+    /// </summary>
+    public string? AuthorMemberRole { get; private set; }
+
+    /// <summary>
+    ///     获取此消息发送者的跨场景统一 OpenID。可能为 <see langword="null" />。
+    /// </summary>
+    public string? AuthorUnionOpenId { get; private set; }
+
+    /// <summary>
+    ///     获取此消息发送者的头像 URL。可能为 <see langword="null" />。
+    /// </summary>
+    public string? AuthorAvatar { get; private set; }
+
     /// <inheritdoc />
     protected SocketMessage(QQBotSocketClient client, string id,
         ISocketMessageChannel channel, SocketUser author, MessageSource source)
@@ -63,6 +88,9 @@ public abstract class SocketMessage : SocketEntity<string>, IMessage
     {
         Content = model.Content ?? string.Empty;
         Timestamp = model.Timestamp;
+        AuthorUsername = model.Author.Username;
+        AuthorUnionOpenId = model.Author.UnionOpenId;
+        AuthorAvatar = model.Author.Avatar;
         if (model.Attachments is { Length: > 0 } attachments)
             Attachments = [..attachments.Select(MessageHelper.CreateAttachment)];
         MentionedEveryone = model.MentionEveryone;
@@ -77,6 +105,11 @@ public abstract class SocketMessage : SocketEntity<string>, IMessage
     {
         Content = model.Content;
         Timestamp = model.Timestamp;
+        AuthorUsername = model.Author.Username;
+        AuthorGroupNickname = model.Author.MemberNickname;
+        AuthorMemberRole = model.Author.MemberRole;
+        AuthorUnionOpenId = model.Author.UnionOpenId?.ToString("N").ToUpperInvariant();
+        AuthorAvatar = model.Author.Avatar;
         if (model.Attachments is { Length: > 0 } attachments)
             Attachments = [..attachments.Select(SocketMessageHelper.CreateAttachment)];
 
